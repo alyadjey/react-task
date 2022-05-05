@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState, Suspense } from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
+
+import Header from './components/UI/navbar/Navbar'
+
+import AppRouter from './components/AppRouter'
+
+import '../src/styles/App.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { AuthContext } from './context'
+import Loader from './components/UI/Loader/Loader'
+import Footer from './components/UI/footer/footer'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [isAuth, setIsAuth] = useState(false)
+
+	const [isLoading, setIsLoading] = useState(true)
+
+	useEffect(() => {
+		if (localStorage.getItem('auth')) {
+			setIsAuth(true)
+		}
+		setIsLoading(false)
+	}, [])
+	return (
+		<Suspense fallback={<Loader />}>
+			<AuthContext.Provider value={{ isAuth, setIsAuth: setIsAuth, isLoading }}>
+				<Router>
+					<Header />
+					<AppRouter />
+					<Footer />
+				</Router>
+			</AuthContext.Provider>
+		</Suspense>
+	)
 }
 
-export default App;
+export default App
